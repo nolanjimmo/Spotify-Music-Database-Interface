@@ -37,7 +37,10 @@ from sqlite3 import Error
 
 
 def main():
-    cursor = createConnection()
+    databaseCreation = input("Please load the data ")
+    while databaseCreation != "load data":
+        databaseCreation = input("Please load the data ")
+    cursor = create_connection()
     ##### These are just some test queries that will run automatically to show functionality, but try your own#####
     #doubleCommandQuery('artist', 'genre', "Alesso", cursor)
     #doubleCommandQuery('title', 'artist', 'Under Control', cursor)
@@ -45,20 +48,25 @@ def main():
     #doubleCommandQuery('artist', 'biggesthit', 'Alesso', cursor)
     #doubleCommandQuery('album', 'artist', 'Clarity', cursor)
 
+    #example for a double command "artist album Zedd title Spectrum"
+
     #Change this to be << but this is easier to read while testing
-    command = input("Please enter a command: ")
+    command = input("> ")
 
     #splits command into the individual words to see which SQL line to call
     commandList = command.split()
     commandCall = commandList[0]
-    commandCall2 = commandList[1]
+
+    #This line had to be added so that if the first command is help it doesn't break
+    if len(commandList) > 1:
+        commandCall2 = commandList[1]
 
     #loop for different commands until quit
     while commandCall.lower() != "quit":
         if (commandCall.lower() == "artist" or commandCall.lower() == "title" or commandCall.lower() == "album"
             or commandCall.lower() == "genre") and (commandCall2.lower() == "artist" or commandCall2.lower() == "title" or commandCall2.lower() == "album"
                                                     or commandCall2.lower() == "genre") and (commandCall.lower() != commandCall2.lower()):
-            doubleCommandQuery(commandList[0], commandList[1], commandList[2], cursor)
+            double_command_query(commandList[0], commandList[1], commandList[2], cursor)
         elif commandCall.lower() == "help":
             help()
         else:
@@ -75,7 +83,7 @@ def main():
 
 #alternate way to access the database using a single and double command query
 #I am going to comment out the connection to the database right now so we don't get any messy errors when we run for now
-def createConnection():
+def create_connection():
     connection = None
     try:
         connection = sqlite3.connect('SongsArtistsDB.db')
@@ -85,7 +93,7 @@ def createConnection():
         if connection:
             return connection.cursor()
 
-def doubleCommandQuery(command1, command2, desiredData, curs):
+def double_command_query(command1, command2, desiredData, curs):
     if command1 == "artist" and (command2 == "genre" or command2 == "biggesthit"):
         curs.execute("SELECT %s FROM artists WHERE name = '%s'" % (command2, desiredData))
     elif command1 == "artist" and (command2 == "title" or command2 == "album"):
