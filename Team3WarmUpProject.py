@@ -8,6 +8,7 @@
 import sqlite3
 from sqlite3 import Error
 
+
 ##### Branch Differences Explanation######
 # I realized that it was going to be really difficult to find a universal sql query structure that we could just plug
 # the command1, command2 and desiredData variables into. So for this version I decided to make the decision structure
@@ -24,7 +25,7 @@ from sqlite3 import Error
 # artist, or Greyhound if the first command is title, and so on)
 # when genre is the first command the system will list all of the command2 items that are in that genre (aka all titles
 # or albums that are in that genre)
-#Examples:
+# Examples:
 # artists, genre, Alesso
 # title, artists, Under Control
 
@@ -39,26 +40,32 @@ from sqlite3 import Error
 def main():
     cursor = createConnection()
     ##### These are just some test queries that will run automatically to show functionality, but try your own#####
-    #doubleCommandQuery('artist', 'genre', "Alesso", cursor)
-    #doubleCommandQuery('title', 'artist', 'Under Control', cursor)
-    #doubleCommandQuery('artist', 'title', 'Swedish House Mafia', cursor)
-    #doubleCommandQuery('artist', 'biggesthit', 'Alesso', cursor)
-    #doubleCommandQuery('album', 'artist', 'Clarity', cursor)
+    # doubleCommandQuery('artist', 'genre', "Alesso", cursor)
+    # doubleCommandQuery('title', 'artist', 'Under Control', cursor)
+    # doubleCommandQuery('artist', 'title', 'Swedish House Mafia', cursor)
+    # doubleCommandQuery('artist', 'biggesthit', 'Alesso', cursor)
+    # doubleCommandQuery('album', 'artist', 'Clarity', cursor)
 
-    #Change this to be << but this is easier to read while testing
+    # Change this to be << but this is easier to read while testing
     command = input("Please enter a command: ")
 
-    #splits command into the individual words to see which SQL line to call
+    # splits command into the individual words to see which SQL line to call
     commandList = command.split()
     commandCall = commandList[0]
     commandCall2 = commandList[1]
+    commandCall3 = None
+    desiredData2 = None
+    if len(commandList) == 5:
+        commandCall3 = commandList[3]
+        desiredData2 = commandList[4]
 
-    #loop for different commands until quit
+    # loop for different commands until quit
     while commandCall.lower() != "quit":
         if (commandCall.lower() == "artist" or commandCall.lower() == "title" or commandCall.lower() == "album"
-            or commandCall.lower() == "genre") and (commandCall2.lower() == "artist" or commandCall2.lower() == "title" or commandCall2.lower() == "album"
-                                                    or commandCall2.lower() == "genre") and (commandCall.lower() != commandCall2.lower()):
-            doubleCommandQuery(commandList[0], commandList[1], commandList[2], cursor)
+            or commandCall.lower() == "genre") and (
+                commandCall2.lower() == "artist" or commandCall2.lower() == "title" or commandCall2.lower() == "album"
+                or commandCall2.lower() == "genre") and (commandCall.lower() != commandCall2.lower()):
+            doubleCommandQuery(commandList[0], commandList[1], commandList[2], commandCall3, desiredData2, cursor)
         elif commandCall.lower() == "help":
             help()
         else:
@@ -68,13 +75,18 @@ def main():
         command = input("Please enter a command: ")
         commandList = command.split()
         commandCall = commandList[0]
-        commandCall.lower()
+        commandCall2 = commandList[1]
+        commandCall3 = None
+        desiredData2 = None
+        if len(commandList) == 5:
+            commandCall3 = commandList[3]
+            desiredData2 = commandList[4]
 
 
 ##########Database Interaction#########################
 
-#alternate way to access the database using a single and double command query
-#I am going to comment out the connection to the database right now so we don't get any messy errors when we run for now
+# alternate way to access the database using a single and double command query
+# I am going to comment out the connection to the database right now so we don't get any messy errors when we run for now
 def createConnection():
     connection = None
     try:
@@ -85,11 +97,16 @@ def createConnection():
         if connection:
             return connection.cursor()
 
-def doubleCommandQuery(command1, command2, desiredData, curs):
+
+def doubleCommandQuery(command1, command2, desiredData, command3, desiredData2, curs):
     if command1 == "artist" and (command2 == "genre" or command2 == "biggesthit"):
         curs.execute("SELECT %s FROM artists WHERE name = '%s'" % (command2, desiredData))
     elif command1 == "artist" and (command2 == "title" or command2 == "album"):
-        curs.execute("SELECT %s FROM %s WHERE artist = '%s'" % (command2, "songs", desiredData))
+        if command3 is not None:
+            curs.execute("SELECT %s FROM %s WHERE %s = '%s' AND %s = '%s'"
+                         % (command2, "songs", command1, desiredData, command3, desiredData2))
+        else:
+            curs.execute("SELECT %s FROM %s WHERE artist = '%s'" % (command2, "songs", desiredData))
     elif command1 == "title" and command2 == "artists":
         curs.execute("SELECT %s FROM %s WHERE title = '%s'" % ('artist', 'songs', desiredData))
     elif command1 == "title" and command2 == "album":
@@ -119,7 +136,6 @@ def help():
     print("- Biggest Hit")
     print("- Genre")
     print("- Title")
-
 
 
 main()
