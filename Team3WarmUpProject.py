@@ -122,11 +122,18 @@ def double_command_query(command1, command2, desiredData, curs):
 
 def help():
     print("You may enter: ")
-    print("- Album")
-    print("- Artist")
-    print("- Biggest Hit")
-    print("- Genre")
-    print("- Title")
+    print("- album artist Album Name")
+    print("- album genre Album Name\n")
+    print("- artist genre Artist Name")
+    print("- artist biggesthit Artist Name")
+    print("- artist song Artist Name")
+    print("- artist album Artist Name\n")
+    print("- genre artists Genre")
+    print("- genre title Genre")
+    print("- genre album Genre\n")
+    print("- title artists Song Title")
+    print("- title album Song Title")
+    print("- title genre Song Title")
 
 
 
