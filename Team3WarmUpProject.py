@@ -38,7 +38,10 @@ from sqlite3 import Error
 
 
 def main():
-    cursor = createConnection()
+    databaseCreation = input("Please load the data ")
+    while databaseCreation != "load data":
+        databaseCreation = input("Please load the data ")
+    cursor = create_connection()
     ##### These are just some test queries that will run automatically to show functionality, but try your own#####
     # doubleCommandQuery('artist', 'genre', "Alesso", cursor)
     # doubleCommandQuery('title', 'artist', 'Under Control', cursor)
@@ -46,16 +49,21 @@ def main():
     # doubleCommandQuery('artist', 'biggesthit', 'Alesso', cursor)
     # doubleCommandQuery('album', 'artist', 'Clarity', cursor)
 
+    # example for a double command "artist album Zedd title Spectrum"
+
     # Change this to be << but this is easier to read while testing
-    command = input("Please enter a command: ")
+    command = input("> ")
 
     # splits command into the individual words to see which SQL line to call
     commandList = command.split()
     commandCall = commandList[0]
-    commandCall2 = commandList[1]
+    commandCall2 = None
     commandCall3 = None
     desiredData2 = None
-    if len(commandList) == 5:
+    # This line had to be added so that if the first command is help it doesn't break
+    if len(commandList) > 1:
+        commandCall2 = commandList[1]
+    if len(commandList) > 3:
         commandCall3 = commandList[3]
         desiredData2 = commandList[4]
 
@@ -65,20 +73,23 @@ def main():
             or commandCall.lower() == "genre") and (
                 commandCall2.lower() == "artist" or commandCall2.lower() == "title" or commandCall2.lower() == "album"
                 or commandCall2.lower() == "genre") and (commandCall.lower() != commandCall2.lower()):
-            doubleCommandQuery(commandList[0], commandList[1], commandList[2], commandCall3, desiredData2, cursor)
+            double_command_query(commandList[0], commandList[1], commandList[2], commandCall3, desiredData2, cursor)
         elif commandCall.lower() == "help":
             help()
         else:
             print("Sorry, your command is not recognized")
             help()
 
-        command = input("Please enter a command: ")
+        command = input("> ")
         commandList = command.split()
         commandCall = commandList[0]
-        commandCall2 = commandList[1]
+        commandCall2 = None
         commandCall3 = None
         desiredData2 = None
-        if len(commandList) == 5:
+        # This line had to be added so that if the first command is help it doesn't break
+        if len(commandList) > 1:
+            commandCall2 = commandList[1]
+        if len(commandList) > 3:
             commandCall3 = commandList[3]
             desiredData2 = commandList[4]
 
@@ -87,7 +98,7 @@ def main():
 
 # alternate way to access the database using a single and double command query
 # I am going to comment out the connection to the database right now so we don't get any messy errors when we run for now
-def createConnection():
+def create_connection():
     connection = None
     try:
         connection = sqlite3.connect('SongsArtistsDB.db')
@@ -98,7 +109,7 @@ def createConnection():
             return connection.cursor()
 
 
-def doubleCommandQuery(command1, command2, desiredData, command3, desiredData2, curs):
+def double_command_query(command1, command2, desiredData, command3, desiredData2, curs):
     if command1 == "artist" and (command2 == "genre" or command2 == "biggesthit"):
         curs.execute("SELECT %s FROM artists WHERE name = '%s'" % (command2, desiredData))
     elif command1 == "artist" and (command2 == "title" or command2 == "album"):
@@ -131,11 +142,18 @@ def doubleCommandQuery(command1, command2, desiredData, command3, desiredData2, 
 
 def help():
     print("You may enter: ")
-    print("- Album")
-    print("- Artist")
-    print("- Biggest Hit")
-    print("- Genre")
-    print("- Title")
+    print("- album artist Album Name")
+    print("- album genre Album Name\n")
+    print("- artist genre Artist Name")
+    print("- artist biggesthit Artist Name")
+    print("- artist song Artist Name")
+    print("- artist album Artist Name\n")
+    print("- genre artists Genre")
+    print("- genre title Genre")
+    print("- genre album Genre\n")
+    print("- title artists Song Title")
+    print("- title album Song Title")
+    print("- title genre Song Title")
 
 
 main()
