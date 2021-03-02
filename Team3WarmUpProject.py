@@ -83,6 +83,28 @@ def main():
         desired_data2 = None
     # loop for different commands until quit
     while command_call.lower() != "quit":
+        print("Command 1 = " + command_call)
+
+        if command_call2 == None:
+            print("Command 2 = None")
+        else:
+            print("Command 2 = " + command_call2)
+
+        if desired_data == None:
+            print("Desired Data = None")
+        else:
+            print("Desired Data = " + desired_data)
+
+        if command_call3 == None:
+            print("Command 3 = None")
+        else:
+            print("Command 3 = " + command_call3)
+
+        if desired_data2 == None:
+            print("Desired Data 2 = None")
+        else:
+            print("Desired Data 2 = " + desired_data2)
+
         if (command_call.lower() == "artist" or command_call.lower() == "title" or command_call.lower() == "album"
             or command_call.lower() == "genre") and (
                 command_call2.lower() == "artist" or command_call2.lower() == "title" or command_call2.lower() == "album"
