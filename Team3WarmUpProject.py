@@ -38,9 +38,9 @@ from sqlite3 import Error
 
 
 def main():
-    databaseCreation = input("Please load the data ")
-    while databaseCreation != "load data":
-        databaseCreation = input("Please load the data ")
+    database_creation = input("Please load the data ")
+    while database_creation != "load data":
+        database_creation = input("Please load the data ")
     cursor = create_connection()
     ##### These are just some test queries that will run automatically to show functionality, but try your own#####
     # doubleCommandQuery('artist', 'genre', "Alesso", cursor)
@@ -55,43 +55,43 @@ def main():
     command = input("> ")
 
     # splits command into the individual words to see which SQL line to call
-    commandList = command.split()
-    commandCall = commandList[0]
-    commandCall2 = None
-    commandCall3 = None
-    desiredData2 = None
+    command_list = command.split()
+    command_call = command_list[0]
+    command_call2 = None
+    command_call3 = None
+    desired_data2 = None
     # This line had to be added so that if the first command is help it doesn't break
-    if len(commandList) > 1:
-        commandCall2 = commandList[1]
-    if len(commandList) > 3:
-        commandCall3 = commandList[3]
-        desiredData2 = commandList[4]
+    if len(command_list) > 1:
+        command_call2 = command_list[1]
+    if len(command_list) > 3:
+        command_call3 = command_list[3]
+        desired_data2 = command_list[4]
 
     # loop for different commands until quit
-    while commandCall.lower() != "quit":
-        if (commandCall.lower() == "artist" or commandCall.lower() == "title" or commandCall.lower() == "album"
-            or commandCall.lower() == "genre") and (
-                commandCall2.lower() == "artist" or commandCall2.lower() == "title" or commandCall2.lower() == "album"
-                or commandCall2.lower() == "genre") and (commandCall.lower() != commandCall2.lower()):
-            double_command_query(commandList[0], commandList[1], commandList[2], commandCall3, desiredData2, cursor)
-        elif commandCall.lower() == "help":
+    while command_call.lower() != "quit":
+        if (command_call.lower() == "artist" or command_call.lower() == "title" or command_call.lower() == "album"
+            or command_call.lower() == "genre") and (
+                command_call2.lower() == "artist" or command_call2.lower() == "title" or command_call2.lower() == "album"
+                or command_call2.lower() == "genre") and (command_call.lower() != command_call2.lower()):
+            double_command_query(command_list[0], command_list[1], command_list[2], command_call3, desired_data2, cursor)
+        elif command_call.lower() == "help":
             help()
         else:
             print("Sorry, your command is not recognized")
             help()
 
         command = input("> ")
-        commandList = command.split()
-        commandCall = commandList[0]
-        commandCall2 = None
-        commandCall3 = None
-        desiredData2 = None
+        command_list = command.split()
+        command_call = command_list[0]
+        command_call2 = None
+        command_call3 = None
+        desired_data2 = None
         # This line had to be added so that if the first command is help it doesn't break
-        if len(commandList) > 1:
-            commandCall2 = commandList[1]
-        if len(commandList) > 3:
-            commandCall3 = commandList[3]
-            desiredData2 = commandList[4]
+        if len(command_list) > 1:
+            command_call2 = command_list[1]
+        if len(command_list) > 3:
+            command_call3 = command_list[3]
+            desired_data2 = command_list[4]
 
 
 ##########Database Interaction#########################
@@ -109,29 +109,29 @@ def create_connection():
             return connection.cursor()
 
 
-def double_command_query(command1, command2, desiredData, command3, desiredData2, curs):
+def double_command_query(command1, command2, desired_data, command3, desired_data2, curs):
     if command1 == "artist" and (command2 == "genre" or command2 == "biggesthit"):
-        curs.execute("SELECT %s FROM artists WHERE name = '%s'" % (command2, desiredData))
+        curs.execute("SELECT %s FROM artists WHERE name = '%s'" % (command2, desired_data))
     elif command1 == "artist" and (command2 == "title" or command2 == "album"):
         if command3 is not None:
             curs.execute("SELECT %s FROM %s WHERE %s = '%s' AND %s = '%s'"
-                         % (command2, "songs", command1, desiredData, command3, desiredData2))
+                         % (command2, "songs", command1, desired_data, command3, desired_data2))
         else:
-            curs.execute("SELECT %s FROM %s WHERE artist = '%s'" % (command2, "songs", desiredData))
+            curs.execute("SELECT %s FROM %s WHERE artist = '%s'" % (command2, "songs", desired_data))
     elif command1 == "title" and command2 == "artists":
-        curs.execute("SELECT %s FROM %s WHERE title = '%s'" % ('artist', 'songs', desiredData))
+        curs.execute("SELECT %s FROM %s WHERE title = '%s'" % ('artist', 'songs', desired_data))
     elif command1 == "title" and command2 == "album":
-        curs.execute("SELECT %s FROM %s WHERE title = '%s'" % (command2, 'songs', desiredData))
+        curs.execute("SELECT %s FROM %s WHERE title = '%s'" % (command2, 'songs', desired_data))
     elif command1 == "title" and command2 == "genre":
         curs.execute("SELECT artists.%s FROM artists INNER JOIN songs ON songs.artist = artists.name "
-                     "WHERE songs.title = '%s'" % (command2, desiredData))
+                     "WHERE songs.title = '%s'" % (command2, desired_data))
     elif command1 == "genre" and command2 == "artists":
-        curs.execute("SELECT %s FROM %s WHERE genre = '%s'" % ('name', command2, desiredData))
+        curs.execute("SELECT %s FROM %s WHERE genre = '%s'" % ('name', command2, desired_data))
     elif command1 == "genre" and (command2 == "title" or command2 == "album"):
         curs.execute("SELECT %s FROM songs INNER JOIN artists ON songs.artist = artists.name "
-                     "WHERE artists.genre = '%s'" % (command2, desiredData))
+                     "WHERE artists.genre = '%s'" % (command2, desired_data))
     elif command1 == "album" and (command2 == "artist" or command2 == "genre"):
-        curs.execute("SELECT %s FROM songs WHERE album = '%s'" % (command2, desiredData))
+        curs.execute("SELECT %s FROM songs WHERE album = '%s'" % (command2, desired_data))
     else:
         print("Command sequence invalid")
 
