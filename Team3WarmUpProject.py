@@ -38,7 +38,7 @@ from sqlite3 import Error
 
 def main():
     databaseCreation = input("Please load the data ")
-    while (databaseCreation != "load data"):
+    while databaseCreation != "load data":
         databaseCreation = input("Please load the data ")
     cursor = create_connection()
     ##### These are just some test queries that will run automatically to show functionality, but try your own#####
@@ -55,27 +55,28 @@ def main():
 
     #splits command into the individual words to see which SQL line to call
     commandList = command.split()
-    commandCall = commandList[0].lower()
+    commandCall = commandList[0]
 
     #This line had to be added so that if the first command is help it doesn't break
     if len(commandList) > 1:
-        commandCall2 = commandList[1].lower()
+        commandCall2 = commandList[1]
 
     #loop for different commands until quit
     while commandCall.lower() != "quit":
-        if ((commandCall == "artist" or commandCall == "title" or commandCall == "album"
-            or commandCall == "genre") and (commandCall2 == "artist" or commandCall2 == "title" or commandCall2 == "album"
-                                                    or commandCall2 == "genre") and (commandCall != commandCall2)):
-            double_command_query(commandCall, commandCall2, commandList[2], cursor)
-        elif (commandCall == "help"):
+        if (commandCall.lower() == "artist" or commandCall.lower() == "title" or commandCall.lower() == "album"
+            or commandCall.lower() == "genre") and (commandCall2.lower() == "artist" or commandCall2.lower() == "title" or commandCall2.lower() == "album"
+                                                    or commandCall2.lower() == "genre") and (commandCall.lower() != commandCall2.lower()):
+            double_command_query(commandList[0], commandList[1], commandList[2], cursor)
+        elif commandCall.lower() == "help":
             help()
         else:
             print("Sorry, your command is not recognized")
-            print("Enter 'help' to display accepted commands")
+            help()
 
-        command = input("> ")
+        command = input("Please enter a command: ")
         commandList = command.split()
-        commandCall = commandList[0].lower()
+        commandCall = commandList[0]
+        commandCall.lower()
 
 
 ##########Database Interaction#########################
