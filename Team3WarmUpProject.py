@@ -36,22 +36,22 @@ def main():
 
     #different if statements for the valid commands so they can be properly passed to our call
     if len(my_SQL_list) == 1:
-        command_call = my_SQL_list[0]
+        command_call = my_SQL_list[0].lower()
         command_call2 = " "
         desired_data = None
         command_call3 = None
         desired_data2 = None
     elif len(my_SQL_list) == 3:
-        command_call = my_SQL_list[0]
-        command_call2 = my_SQL_list[1]
+        command_call = my_SQL_list[0].lower()
+        command_call2 = my_SQL_list[1].lower()
         desired_data = my_SQL_list[2]
         command_call3 = None
         desired_data2 = None
     elif len(my_SQL_list) == 5:
-        command_call = my_SQL_list[0]
-        command_call2 = my_SQL_list[1]
+        command_call = my_SQL_list[0].lower()
+        command_call2 = my_SQL_list[1].lower()
         desired_data = my_SQL_list[2]
-        command_call3 = my_SQL_list[3]
+        command_call3 = my_SQL_list[3].lower()
         desired_data2 = my_SQL_list[4]
     #catch all for invalid commands
     else:
@@ -65,16 +65,16 @@ def main():
     while command_call.lower() != "quit":
 
     #making sure that the command is valid before the function is called
-        if (command_call.lower() == "artist" or command_call.lower() == "title" or command_call.lower() == "album"
-            or command_call.lower() == "genre") and (
-                command_call2.lower() == "artist" or command_call2.lower() == "title" or command_call2.lower() == "album"
-                or command_call2.lower() == "genre" or command_call2.lower() == "biggesthit") and (command_call.lower() != command_call2.lower()):
+        if (command_call == "artist" or command_call == "title" or command_call == "album"
+            or command_call == "genre") and (
+                command_call2 == "artist" or command_call2 == "title" or command_call2 == "album"
+                or command_call2 == "genre" or command_call2 == "biggesthit") and (command_call != command_call2):
             double_command_query(command_call, command_call2, desired_data, command_call3, desired_data2, cursor)
-        elif command_call.lower() == "help":
+        elif command_call == "help":
             help()
         else:
             print("Sorry, your command is not recognized")
-            help()
+            print("Enter 'help' to see list of valid commands")
 
         #allow for the looping for the commands
         command = input("> ")
@@ -82,22 +82,22 @@ def main():
         my_SQL_list = parser(command)
 
         if len(my_SQL_list) == 1:
-            command_call = my_SQL_list[0]
+            command_call = my_SQL_list[0].lower()
             command_call2 = " "
             desired_data = None
             command_call3 = None
             desired_data2 = None
         elif len(my_SQL_list) == 3:
-            command_call = my_SQL_list[0]
-            command_call2 = my_SQL_list[1]
+            command_call = my_SQL_list[0].lower()
+            command_call2 = my_SQL_list[1].lower()
             desired_data = my_SQL_list[2]
             command_call3 = None
             desired_data2 = None
         elif len(my_SQL_list) == 5:
-            command_call = my_SQL_list[0]
-            command_call2 = my_SQL_list[1]
+            command_call = my_SQL_list[0].lower()
+            command_call2 = my_SQL_list[1].lower()
             desired_data = my_SQL_list[2]
-            command_call3 = my_SQL_list[3]
+            command_call3 = my_SQL_list[3].lower()
             desired_data2 = my_SQL_list[4]
         else:
             command_call = " "
