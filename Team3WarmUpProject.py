@@ -5,8 +5,10 @@
 # Delaney Sullivan
 
 # main program holds the interface of the program
+import re
 import sqlite3
 from sqlite3 import Error
+
 
 ##### Branch Differences Explanation######
 # I realized that it was going to be really difficult to find a universal sql query structure that we could just plug
@@ -24,7 +26,7 @@ from sqlite3 import Error
 # artist, or Greyhound if the first command is title, and so on)
 # when genre is the first command the system will list all of the command2 items that are in that genre (aka all titles
 # or albums that are in that genre)
-#Examples:
+# Examples:
 # artists, genre, Alesso
 # title, artists, Under Control
 
@@ -37,52 +39,122 @@ from sqlite3 import Error
 
 
 def main():
-    databaseCreation = input("Please load the data ")
-    while databaseCreation != "load data":
-        databaseCreation = input("Please load the data ")
+    database_creation = input("Please load the data ")
+    while database_creation != "load data":
+        database_creation = input("Please load the data ")
     cursor = create_connection()
     ##### These are just some test queries that will run automatically to show functionality, but try your own#####
-    #doubleCommandQuery('artist', 'genre', "Alesso", cursor)
-    #doubleCommandQuery('title', 'artist', 'Under Control', cursor)
-    #doubleCommandQuery('artist', 'title', 'Swedish House Mafia', cursor)
-    #doubleCommandQuery('artist', 'biggesthit', 'Alesso', cursor)
-    #doubleCommandQuery('album', 'artist', 'Clarity', cursor)
+    # doubleCommandQuery('artist', 'genre', "Alesso", cursor)
+    # doubleCommandQuery('artist', 'title', 'Swedish House Mafia', cursor)
+    # doubleCommandQuery('artist', 'biggesthit', 'Alesso', cursor)
+    # doubleCommandQuery('album', 'artist', 'Clarity', cursor)
 
-    #example for a double command "artist album Zedd title Spectrum"
+    # example for a double command "artist album Zedd title Spectrum"
+    ##EXAMPLE COMMANDS
+    # > artist album Zedd title Spectrum
+    # Clarity
+    # > artist genre Alesso
+    # Progessive House
 
-    #Change this to be << but this is easier to read while testing
+    # Change this to be << but this is easier to read while testing
     command = input("> ")
+    my_SQL_list = []
+    my_SQL_list = parser(command)
 
-    #splits command into the individual words to see which SQL line to call
-    commandList = command.split()
-    commandCall = commandList[0]
+    if len(my_SQL_list) == 1:
+        command_call = my_SQL_list[0]
+        command_call2 = " "
+        desired_data = None
+        command_call3 = None
+        desired_data2 = None
+    elif len(my_SQL_list) == 3:
+        command_call = my_SQL_list[0]
+        command_call2 = my_SQL_list[1]
+        desired_data = my_SQL_list[2]
+        command_call3 = None
+        desired_data2 = None
+    elif len(my_SQL_list) == 5:
+        command_call = my_SQL_list[0]
+        command_call2 = my_SQL_list[1]
+        desired_data = my_SQL_list[2]
+        command_call3 = my_SQL_list[3]
+        desired_data2 = my_SQL_list[4]
+    else:
+        command_call = " "
+        command_call2 = " "
+        desired_data = " "
+        command_call3 = None
+        desired_data2 = None
+    # loop for different commands until quit
+    while command_call.lower() != "quit":
+        print("Command 1 = " + command_call)
 
-    #This line had to be added so that if the first command is help it doesn't break
-    if len(commandList) > 1:
-        commandCall2 = commandList[1]
+        if command_call2 == None:
+            print("Command 2 = None")
+        else:
+            print("Command 2 = " + command_call2)
 
-    #loop for different commands until quit
-    while commandCall.lower() != "quit":
-        if (commandCall.lower() == "artist" or commandCall.lower() == "title" or commandCall.lower() == "album"
-            or commandCall.lower() == "genre") and (commandCall2.lower() == "artist" or commandCall2.lower() == "title" or commandCall2.lower() == "album"
-                                                    or commandCall2.lower() == "genre") and (commandCall.lower() != commandCall2.lower()):
-            double_command_query(commandList[0], commandList[1], commandList[2], cursor)
-        elif commandCall.lower() == "help":
+        if desired_data == None:
+            print("Desired Data = None")
+        else:
+            print("Desired Data = " + desired_data)
+
+        if command_call3 == None:
+            print("Command 3 = None")
+        else:
+            print("Command 3 = " + command_call3)
+
+        if desired_data2 == None:
+            print("Desired Data 2 = None")
+        else:
+            print("Desired Data 2 = " + desired_data2)
+
+        if (command_call.lower() == "artist" or command_call.lower() == "title" or command_call.lower() == "album"
+            or command_call.lower() == "genre") and (
+                command_call2.lower() == "artist" or command_call2.lower() == "title" or command_call2.lower() == "album"
+                or command_call2.lower() == "genre") and (command_call.lower() != command_call2.lower()):
+            double_command_query(command_call, command_call2, desired_data, command_call3, desired_data2, cursor)
+        elif command_call.lower() == "help":
             help()
         else:
             print("Sorry, your command is not recognized")
             help()
 
-        command = input("Please enter a command: ")
-        commandList = command.split()
-        commandCall = commandList[0]
-        commandCall.lower()
+        command = input("> ")
+        my_SQL_list = []
+        my_SQL_list = parser(command)
+
+        if len(my_SQL_list) == 1:
+            command_call = my_SQL_list[0]
+            command_call2 = " "
+            desired_data = None
+            command_call3 = None
+            desired_data2 = None
+        elif len(my_SQL_list) == 3:
+            command_call = my_SQL_list[0]
+            command_call2 = my_SQL_list[1]
+            desired_data = my_SQL_list[2]
+            command_call3 = None
+            desired_data2 = None
+        elif len(my_SQL_list) == 5:
+            command_call = my_SQL_list[0]
+            command_call2 = my_SQL_list[1]
+            desired_data = my_SQL_list[2]
+            command_call3 = my_SQL_list[3]
+            desired_data2 = my_SQL_list[4]
+        else:
+            command_call = " "
+            command_call2 = " "
+            desired_data = " "
+            command_call3 = None
+            desired_data2 = None
+
 
 
 ##########Database Interaction#########################
 
-#alternate way to access the database using a single and double command query
-#I am going to comment out the connection to the database right now so we don't get any messy errors when we run for now
+# alternate way to access the database using a single and double command query
+# I am going to comment out the connection to the database right now so we don't get any messy errors when we run for now
 def create_connection():
     connection = None
     try:
@@ -93,25 +165,60 @@ def create_connection():
         if connection:
             return connection.cursor()
 
-def double_command_query(command1, command2, desiredData, curs):
+def parser(command):
+    command_list = command.split()
+
+    keywords = ["artist", "title", "biggesthit", "album", "genre"]
+
+    double_word_list = re.findall('"([^"]*)"', command)
+
+    list_for_SQL = []
+    dupe_list = []
+    amount_of_double_words = len(double_word_list)
+    list_indexer = 0
+    if amount_of_double_words > 0:
+        for word in command_list:
+            if word not in keywords:
+                dupe_list.append(double_word_list[list_indexer])
+                if amount_of_double_words == 2:
+                    list_indexer = 1
+            elif word[0] and word[-1] != '"':
+                dupe_list.append(word)
+            else:
+                dupe_list.append(word)
+        for word in dupe_list:
+            if word not in list_for_SQL:
+                list_for_SQL.append(word)
+
+    else:
+        for word in command_list:
+            list_for_SQL.append(word)
+    return list_for_SQL
+
+
+def double_command_query(command1, command2, desired_data, command3, desired_data2, curs):
     if command1 == "artist" and (command2 == "genre" or command2 == "biggesthit"):
-        curs.execute("SELECT %s FROM artists WHERE name = '%s'" % (command2, desiredData))
+        curs.execute("SELECT %s FROM artists WHERE name = '%s'" % (command2, desired_data))
     elif command1 == "artist" and (command2 == "title" or command2 == "album"):
-        curs.execute("SELECT %s FROM %s WHERE artist = '%s'" % (command2, "songs", desiredData))
+        if command3 is not None:
+            curs.execute("SELECT %s FROM %s WHERE %s = '%s' AND %s = '%s'"
+                         % (command2, "songs", command1, desired_data, command3, desired_data2))
+        else:
+            curs.execute("SELECT %s FROM %s WHERE artist = '%s'" % (command2, "songs", desired_data))
     elif command1 == "title" and command2 == "artists":
-        curs.execute("SELECT %s FROM %s WHERE title = '%s'" % ('artist', 'songs', desiredData))
+        curs.execute("SELECT %s FROM %s WHERE title = '%s'" % ('artist', 'songs', desired_data))
     elif command1 == "title" and command2 == "album":
-        curs.execute("SELECT %s FROM %s WHERE title = '%s'" % (command2, 'songs', desiredData))
+        curs.execute("SELECT %s FROM %s WHERE title = '%s'" % (command2, 'songs', desired_data))
     elif command1 == "title" and command2 == "genre":
         curs.execute("SELECT artists.%s FROM artists INNER JOIN songs ON songs.artist = artists.name "
-                     "WHERE songs.title = '%s'" % (command2, desiredData))
+                     "WHERE songs.title = '%s'" % (command2, desired_data))
     elif command1 == "genre" and command2 == "artists":
-        curs.execute("SELECT %s FROM %s WHERE genre = '%s'" % ('name', command2, desiredData))
+        curs.execute("SELECT %s FROM %s WHERE genre = '%s'" % ('name', command2, desired_data))
     elif command1 == "genre" and (command2 == "title" or command2 == "album"):
         curs.execute("SELECT %s FROM songs INNER JOIN artists ON songs.artist = artists.name "
-                     "WHERE artists.genre = '%s'" % (command2, desiredData))
+                     "WHERE artists.genre = '%s'" % (command2, desired_data))
     elif command1 == "album" and (command2 == "artist" or command2 == "genre"):
-        curs.execute("SELECT %s FROM songs WHERE album = '%s'" % (command2, desiredData))
+        curs.execute("SELECT %s FROM songs WHERE album = '%s'" % (command2, desired_data))
     else:
         print("Command sequence invalid")
 
@@ -136,5 +243,5 @@ def help():
     print("- title genre Song Title")
 
 
-
 main()
+
