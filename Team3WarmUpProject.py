@@ -112,7 +112,7 @@ def main():
         if (command_call.lower() == "artist" or command_call.lower() == "title" or command_call.lower() == "album"
             or command_call.lower() == "genre") and (
                 command_call2.lower() == "artist" or command_call2.lower() == "title" or command_call2.lower() == "album"
-                or command_call2.lower() == "genre") and (command_call.lower() != command_call2.lower()):
+                or command_call2.lower() == "genre" or command_call2.lower() == "biggesthit") and (command_call.lower() != command_call2.lower()):
             double_command_query(command_call, command_call2, desired_data, command_call3, desired_data2, cursor)
         elif command_call.lower() == "help":
             help()
