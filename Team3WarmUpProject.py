@@ -45,12 +45,16 @@ def main():
     cursor = create_connection()
     ##### These are just some test queries that will run automatically to show functionality, but try your own#####
     # doubleCommandQuery('artist', 'genre', "Alesso", cursor)
-    # doubleCommandQuery('title', 'artist', 'Under Control', cursor)
     # doubleCommandQuery('artist', 'title', 'Swedish House Mafia', cursor)
     # doubleCommandQuery('artist', 'biggesthit', 'Alesso', cursor)
     # doubleCommandQuery('album', 'artist', 'Clarity', cursor)
 
     # example for a double command "artist album Zedd title Spectrum"
+    ##EXAMPLE COMMANDS
+    # > artist album Zedd title Spectrum
+    # Clarity
+    # > artist genre Alesso
+    # Progessive House
 
     # Change this to be << but this is easier to read while testing
     command = input("> ")
